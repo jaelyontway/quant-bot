@@ -8,22 +8,39 @@ from pathlib import Path
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
 
 
 def plot_close_prices(csv_path: Path, output_path: Path | None = None) -> None:
-    df = pd.read_csv(csv_path, parse_dates=["timestamp"])
+    df = pd.read_csv(
+        csv_path,
+        parse_dates=["timestamp (UTC)", "timestamp (America/New_York)"],
+    )
     if df.empty:
         raise SystemExit(f"No rows found in {csv_path}")
 
-    fig, ax = plt.subplots(figsize=(10, 5))
-    for event_id, group in df.groupby("event_id"):
-        ax.plot(group["timestamp"], group["close"], label=f"Event {event_id}")
+    timestamp_col = (
+        "timestamp (America/New_York)"
+        if "timestamp (America/New_York)" in df.columns
+        else "timestamp (UTC)"
+    )
 
-    ax.set_title("NVDA Close Prices Around News Events")
-    ax.set_xlabel("Timestamp (UTC)")
+    fig, ax = plt.subplots(figsize=(10, 5))
+    if "event_id" in df.columns:
+        for event_id, group in df.groupby("event_id"):
+            ax.plot(group[timestamp_col], group["close"], label=f"Event {event_id}")
+    else:
+        ax.plot(df[timestamp_col], df["close"], label="NVDA Close Price")
+
+    ax.set_title("NVDA Close Prices (Regular Trading Hours)")
+    ax.set_xlabel("Time (America/New_York)")
     ax.set_ylabel("Close Price (USD)")
     ax.legend()
     ax.grid(True, alpha=0.3)
+
+    date_formatter = DateFormatter("%m-%d %H:%M")
+    ax.xaxis.set_major_formatter(date_formatter)
+    fig.autofmt_xdate()
 
     if output_path:
         fig.savefig(output_path, bbox_inches="tight")

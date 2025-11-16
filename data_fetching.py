@@ -323,12 +323,14 @@ def fetch_nvda_prices_around_event(
     if df.empty:
         return df, query_meta
 
-    df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True)
-    df = df.sort_values("timestamp").reset_index(drop=True)
+    df["timestamp (UTC)"] = pd.to_datetime(df["timestamp"], utc=True)
+    df = df.drop(columns=["timestamp"])
+    df = df.sort_values("timestamp (UTC)").reset_index(drop=True)
 
     # Restrict to regular trading hours in market timezone
     market_tz = ZoneInfo(CONFIG.market_timezone)
-    local_ts = df["timestamp"].dt.tz_convert(market_tz)
+    local_ts = df["timestamp (UTC)"].dt.tz_convert(market_tz)
+    df["timestamp (America/New_York)"] = local_ts.dt.tz_localize(None)
     start_time = time(9, 30)
     end_time = time(16, 0)
     in_regular_hours = local_ts.dt.time.between(start_time, end_time, inclusive="both")
@@ -341,11 +343,24 @@ def fetch_nvda_prices_around_event(
     df["pct_change_from_event"] = (df["close"] / first_close) - 1
     df["log_return"] = df["close"].apply(math.log).diff()
 
+    cols = [
+        "timestamp (UTC)",
+        "timestamp (America/New_York)",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "pct_change_from_event",
+        "log_return",
+    ]
+    df = df[cols]
+
     query_meta = {
         **query_meta,
         "bars_returned": len(df),
-        "first_timestamp": df["timestamp"].iloc[0].isoformat(),
-        "last_timestamp": df["timestamp"].iloc[-1].isoformat(),
+        "first_timestamp": df["timestamp (UTC)"].iloc[0].isoformat(),
+        "last_timestamp": df["timestamp (UTC)"].iloc[-1].isoformat(),
     }
     return df, query_meta
 
