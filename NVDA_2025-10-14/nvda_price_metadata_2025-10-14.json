@@ -1,0 +1,23 @@
+{
+  "request_path": "https://api.polygon.io/v2/aggs/ticker/NVDA/range/1/hour/2025-10-14/2025-10-14",
+  "status_code": 200,
+  "result_count": 7,
+  "start": "2025-10-14T09:30:00-04:00",
+  "end": "2025-10-14T16:30:00-04:00",
+  "interval_minutes": 60,
+  "bars_returned": 7,
+  "first_timestamp": "2025-10-14T14:00:00+00:00",
+  "last_timestamp": "2025-10-14T20:00:00+00:00",
+  "anchor_timestamp": "2025-10-14T09:30:00-04:00",
+  "anchor_reason": "start_of_day_regular_hours",
+  "target_date": "2025-10-14",
+  "trading_days_requested": 1,
+  "trading_days_actual": [
+    "2025-10-14"
+  ],
+  "regular_hours": {
+    "start": "09:30",
+    "end": "16:00",
+    "timezone": "America/New_York"
+  }
+}
