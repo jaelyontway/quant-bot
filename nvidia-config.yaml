@@ -28,7 +28,7 @@ news_domains:
 defaults:
   news_timezone: America/New_York
   interval_minutes: 60
-  date: 2025-11-13
-  trading_days: 3
+  date: 2025-10-1
+  trading_days: 15
   keywords:
     - government shutdown 
