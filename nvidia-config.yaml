@@ -1,0 +1,34 @@
+# Set configuration for fetching data from news and stock APIs
+
+apis:
+  news:
+    url: https://newsapi.org/v2/everything
+    key: 59b5f5dc11884becab2203fb184b4fa1 #api key 
+  stocks:
+    # https://api.polygon.io/v2/aggs/ticker/NVDA/range/60/minute
+    url: https://api.polygon.io/v2/aggs/ticker
+    key: mG9wznyNXoph8ApIWcVsmxFp6JtPmQ8c #api key
+
+ticker: NVDA
+market_timezone: America/New_York
+news_domains:
+  - wsj.com
+  - ft.com
+  - reuters.com
+  - bloomberg.com
+  - nytimes.com
+  - cnbc.com
+  - marketwatch.com
+  - barrons.com
+  - economist.com
+  - forbes.com
+  - businessinsider.com
+  - goldmansachs.com
+
+defaults:
+  news_timezone: America/New_York
+  interval_minutes: 60
+  date: 2025-11-13
+  trading_days: 3
+  keywords:
+    - government shutdown 

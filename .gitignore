@@ -5,4 +5,3 @@ news_*.csv
 news_events_*.csv
 nvda_prices_around_news_*.csv
 config.yaml
-nvidia-config.yaml
