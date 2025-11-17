@@ -1,0 +1,53 @@
+2025-11-16 20:59:14 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 20:59:14 | INFO     | Starting Codex v1.8.17
+2025-11-16 20:59:14 | INFO     | Ensuring database is correct and up to date...
+2025-11-16 20:59:21 | SUCCESS  | Database ready.
+2025-11-16 20:59:21 | SUCCESS  | Created admin user.
+2025-11-16 20:59:21 | INFO     | Created AdminFlag: Auto Update = False
+2025-11-16 20:59:21 | INFO     | Created AdminFlag: Banner Text = True
+2025-11-16 20:59:21 | INFO     | Created AdminFlag: Folder View = True
+2025-11-16 20:59:21 | INFO     | Created AdminFlag: Import Metadata = True
+2025-11-16 20:59:21 | INFO     | Created AdminFlag: Lazy Import Metadata = True
+2025-11-16 20:59:21 | INFO     | Created AdminFlag: Non Users = True
+2025-11-16 20:59:21 | INFO     | Created AdminFlag: Registration = True
+2025-11-16 20:59:21 | INFO     | Created AdminFlag: Send Telemetry = True
+2025-11-16 20:59:21 | INFO     | Created Custom Covers Dir settings in the db.
+2025-11-16 20:59:21 | INFO     | root_path: 
+2025-11-16 20:59:21 | SUCCESS  | Running Codex v1.8.17
+2025-11-16 20:59:21 | SUCCESS  | BroadcastListener started.
+2025-11-16 20:59:22 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 20:59:24 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 20:59:25 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 20:59:26 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 20:59:26 | INFO     | LibrarianDaemon started all threads.
+2025-11-16 20:59:26 | SUCCESS  | LibrarianDaemon ready for tasks.
+2025-11-16 20:59:26 | INFO     | Started watching library /Users/lambertike/Downloads/01 HW Code/02 Fall '25/ME 369P/Skynet Quantbot/quant-bot/config/custom-covers with poll
+2025-11-16 20:59:26 | INFO     | Library /Users/lambertike/Downloads/01 HW Code/02 Fall '25/ME 369P/Skynet Quantbot/quant-bot/config/custom-covers waiting for manual poll.
+2025-11-16 20:59:26 | INFO     | Looking for search entries to update since the fracturing of the multiverse...
+2025-11-16 20:59:26 | INFO     | Looking for missing search entries to create...
+2025-11-16 20:59:26 | SUCCESS  | Search index found to be already synced in a moment.
+2025-11-16 21:13:53 | INFO     | Asking hypercorn to shut down gracefully. Could take 10 seconds...
+2025-11-16 21:13:53 | INFO     | BroadcastListener shutdown
+2025-11-16 21:13:53 | SUCCESS  | Goodbye.
+2025-11-16 21:16:41 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 21:16:41 | INFO     | Starting Codex v1.8.17
+2025-11-16 21:16:41 | INFO     | Ensuring database is correct and up to date...
+2025-11-16 21:16:41 | INFO     | Database up to date.
+2025-11-16 21:16:41 | SUCCESS  | Database ready.
+2025-11-16 21:16:41 | INFO     | root_path: 
+2025-11-16 21:16:41 | SUCCESS  | Running Codex v1.8.17
+2025-11-16 21:16:41 | SUCCESS  | BroadcastListener started.
+2025-11-16 21:16:43 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 21:16:44 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 21:16:45 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 21:16:46 | WARNING  | Cannot detect or read from CBR archives
+2025-11-16 21:16:46 | INFO     | LibrarianDaemon started all threads.
+2025-11-16 21:16:46 | SUCCESS  | LibrarianDaemon ready for tasks.
+2025-11-16 21:16:46 | INFO     | Started watching library /Users/lambertike/Downloads/01 HW Code/02 Fall '25/ME 369P/Skynet Quantbot/quant-bot/config/custom-covers with poll
+2025-11-16 21:16:46 | INFO     | Library /Users/lambertike/Downloads/01 HW Code/02 Fall '25/ME 369P/Skynet Quantbot/quant-bot/config/custom-covers waiting for manual poll.
+2025-11-16 21:16:46 | INFO     | Looking for search entries to update since the fracturing of the multiverse...
+2025-11-16 21:16:46 | INFO     | Looking for missing search entries to create...
+2025-11-16 21:16:46 | SUCCESS  | Search index found to be already synced in a moment.
+2025-11-16 21:18:50 | INFO     | Asking hypercorn to shut down gracefully. Could take 10 seconds...
+2025-11-16 21:18:51 | INFO     | BroadcastListener shutdown
+2025-11-16 21:18:51 | SUCCESS  | Goodbye.

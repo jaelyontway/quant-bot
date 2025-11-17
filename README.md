@@ -1,11 +1,61 @@
-# NVDA News & Price Linker
+# ML Trading Margin Predictor
 
-Utility scripts that fetch AI‑relevant news for NVIDIA (NVDA) from NewsAPI and link the earliest headlines to intraday Polygon price data. Designed for workflows where an LLM performs downstream event clustering and analysis.
+**Pass in text → Get buy/sell margin predictions**
 
-## Requirements
+A machine learning model (Random Forest) that predicts optimal trading margins based on news sentiment.
+
+Also includes data fetching utilities for NVIDIA (NVDA) news and price data.
+
+---
+
+## 🚀 Quick Start - ML Predictor
+
+```bash
+# Install dependencies
+pip install -r requirements_east.txt
+
+# Pass in any text and get predictions
+python simple_predict.py \
+    --text "NVIDIA announces breakthrough chip. Analysts upgrade to buy." \
+    --price 140.50
+```
+
+**Output:**
+```
+📈 Upper Margin (SELL): $149.90 (+6.69%)
+📉 Lower Margin (BUY):  $137.37 (-2.23%)
+```
+
+**See `COMPLETE_GUIDE.md` for full documentation.**
+
+---
+
+## 📁 Main Files
+
+### **ML Predictor:**
+- **`simple_predict.py`** - Pass in text, get predictions ⭐
+- **`test_ml_model.py`** - Test ML model with synthetic data
+- **`train_ml_model.py`** - Train on real historical data
+- **`collect_training_data.py`** - Collect training data
+- **`COMPLETE_GUIDE.md`** - Full ML documentation
+
+### **Data Fetching (Jalen's code):**
+- **`src/east/data_fetching.py`** - Fetch NVDA news and prices
+
+---
+
+## 🤖 Is This Machine Learning?
+
+✅ **YES!** Random Forest Regression with 6 engineered features.
+
+---
+
+## Data Fetching (Original README)
+
+### Requirements
 
 - Python 3.11+ (repository already uses a `.venv`)
-- Dependencies listed in `data_fetching.py` (`pandas`, `requests`, `zoneinfo`, etc.)
+- Dependencies: `pip install -r requirements_east.txt`
 - Valid API keys:
   - `NEWS_API_KEY` (NewsAPI `everything` endpoint)
   - `STOCK_API_KEY` (Polygon aggregates endpoint)
