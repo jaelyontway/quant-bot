@@ -2,21 +2,21 @@
 """
 Run EAST Model
 
-Takes in news CSV and price CSV, runs the model, outputs to feedcsv.csv and feedcsv2.csv.
+Takes in news CSV and price CSV, runs the model, outputs to output.txt.
 
 Usage:
     python run_east_model.py <news_csv> <price_csv>
 
 Example:
-    python run_east_model.py quant-bot/data/demo_data/NVDA_2025-10-13/news_2025-10-13.csv quant-bot/data/demo_data/NVDA_2025-10-13/nvda_prices_2025-10-13.csv
+    python run_east_model.py quant-bot/feedcsv.csv quant-bot/feedcsv2.csv
 """
 
 import sys
 import logging
 from pathlib import Path
 
-# Add quant-bot/src to path
-sys.path.insert(0, str(Path(__file__).parent / "quant-bot" / "src"))
+# Add parent directory (quant-bot/src) to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from east.model import run_model
 
@@ -28,9 +28,7 @@ if __name__ == '__main__':
     if len(sys.argv) != 3:
         print("Usage: python run_east_model.py <news_csv> <price_csv>")
         print("\nExample:")
-        print("  python run_east_model.py \\")
-        print("    quant-bot/data/demo_data/NVDA_2025-10-13/news_2025-10-13.csv \\")
-        print("    quant-bot/data/demo_data/NVDA_2025-10-13/nvda_prices_2025-10-13.csv")
+        print("  python run_east_model.py quant-bot/feedcsv.csv quant-bot/feedcsv2.csv")
         sys.exit(1)
 
     news_csv, price_csv = sys.argv[1], sys.argv[2]
@@ -52,9 +50,8 @@ if __name__ == '__main__':
     # Run model
     signal, margins = run_model(news_csv, price_csv)
 
-    # Save to quant-bot/src/east/output.txt
-    output_path = Path(__file__).parent / "quant-bot" / "src" / "east" / "output.txt"
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    # Save to output.txt in the same directory as this script
+    output_path = Path(__file__).parent / "output.txt"
 
     with open(output_path, 'w') as f:
         f.write(f"UPPER_MARGIN: {margins['upper_margin']:.2f}\n")
