@@ -5,7 +5,7 @@ import shutil
 import yaml
 
 CONFIG_FILE = "nvidia-config.yaml"
-FETCH_SCRIPT = "fetch_prices.py"
+FETCH_SCRIPT = "simPriceHelper.py"
 TARGET_DATE_FILE = "targetSimDate.txt"
 
 
