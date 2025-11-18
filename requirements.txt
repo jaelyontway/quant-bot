@@ -1,0 +1,8 @@
+pandas>=2.0
+requests>=2.31
+pyyaml>=6.0
+feedparser>=6.0
+beautifulsoup4>=4.12
+newspaper3k>=0.2
+lxml>=5.0
+python-dateutil>=2.8
