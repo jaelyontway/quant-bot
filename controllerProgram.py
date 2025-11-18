@@ -3,7 +3,8 @@ import shutil
 import time
 import subprocess
 import yaml  # for YAML modification
-
+print("We have limited demo dates available due to API restrictions")
+print("Current valid dates are: 2025-10-13, and 2025-11-13")
 while True:
     date = input('Enter a date (YYYY-MM-DD): ').strip()
     folder_name = f"NVDA_{date}"
