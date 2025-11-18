@@ -2,13 +2,14 @@
 """
 Run EAST Model
 
-Takes in news CSV and price CSV, runs the model, outputs to output.txt.
+Automatically reads feedcsv.csv and feedcsv2.csv from quant-bot/ directory,
+runs the model, and outputs to output.txt.
 
 Usage:
-    python run_east_model.py <news_csv> <price_csv>
+    python run_east_model.py
 
 Example:
-    python run_east_model.py quant-bot/feedcsv.csv quant-bot/feedcsv2.csv
+    python run_east_model.py
 """
 
 import sys
@@ -25,30 +26,30 @@ logger = logging.getLogger(__name__)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("Usage: python run_east_model.py <news_csv> <price_csv>")
-        print("\nExample:")
-        print("  python run_east_model.py quant-bot/feedcsv.csv quant-bot/feedcsv2.csv")
-        sys.exit(1)
+    # Automatically use feedcsv.csv and feedcsv2.csv from quant-bot directory
+    # Get the quant-bot directory (3 levels up from this file)
+    quant_bot_dir = Path(__file__).parent.parent.parent
+    news_csv = quant_bot_dir / "feedcsv.csv"
+    price_csv = quant_bot_dir / "feedcsv2.csv"
 
-    news_csv, price_csv = sys.argv[1], sys.argv[2]
-
-    if not Path(news_csv).exists():
+    if not news_csv.exists():
         print(f"Error: News CSV not found: {news_csv}")
+        print(f"Expected location: quant-bot/feedcsv.csv")
         sys.exit(1)
 
-    if not Path(price_csv).exists():
+    if not price_csv.exists():
         print(f"Error: Price CSV not found: {price_csv}")
+        print(f"Expected location: quant-bot/feedcsv2.csv")
         sys.exit(1)
 
     logger.info("="*60)
     logger.info("EAST Model - Running")
     logger.info("="*60)
-    logger.info(f"News CSV: {news_csv}")
-    logger.info(f"Price CSV: {price_csv}")
+    logger.info(f"News CSV: {news_csv.name}")
+    logger.info(f"Price CSV: {price_csv.name}")
 
     # Run model
-    signal, margins = run_model(news_csv, price_csv)
+    signal, margins = run_model(str(news_csv), str(price_csv))
 
     # Save to output.txt in the same directory as this script
     output_path = Path(__file__).parent / "output.txt"
