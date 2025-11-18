@@ -9,6 +9,7 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 import json
 import pandas as pd
 from urllib.parse import quote
@@ -31,7 +32,11 @@ class NewsFetcher:
         self.keywords = keywords
         self.start_date = datetime.strptime(start_date, '%Y-%m-%d')
         self.end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        self.start_date_date = self.start_date.date()
+        self.end_date_date = self.end_date.date()
         self.articles = []
+        self.utc_tz = ZoneInfo("UTC")
+        self.ny_tz = ZoneInfo("America/New_York")
 
     def build_google_news_url(self) -> str:
         """Build Google News RSS URL with keywords."""
@@ -145,10 +150,40 @@ class NewsFetcher:
             # RSS feeds typically use RFC 2822 format
             from email.utils import parsedate_to_datetime
             dt = parsedate_to_datetime(date_string)
-            # Remove timezone info to make it comparable with naive datetimes
-            return dt.replace(tzinfo=None) if dt else None
+            return dt
         except:
             return None
+
+    def normalize_pub_date(self, pub_date: datetime):
+        """Ensure published date has timezone info and build UTC/NY conversions."""
+        if not pub_date:
+            return None, None, None
+
+        aware_dt = pub_date if pub_date.tzinfo else pub_date.replace(tzinfo=self.utc_tz)
+        utc_dt = aware_dt.astimezone(self.utc_tz)
+        ny_dt = aware_dt.astimezone(self.ny_tz)
+        return aware_dt, utc_dt, ny_dt
+
+    def build_date_fields(self, utc_dt: datetime, ny_dt: datetime) -> Dict[str, str]:
+        """Create CSV-friendly date fields mirroring the reference training data."""
+        unknown = "Unknown"
+        if not utc_dt or not ny_dt:
+            return {
+                'actual date and time': unknown,
+                'published_date_utc': unknown,
+                'published_date_ny': unknown,
+                'published_time_ny': unknown,
+                'published_date_et': unknown
+            }
+
+        actual_time = f"Updated {ny_dt.strftime('%I:%M %p')} ET {ny_dt.strftime('%m/%d/%Y')}"
+        return {
+            'actual date and time': actual_time,
+            'published_date_utc': utc_dt.strftime('%Y-%m-%d %H:%M:%S'),
+            'published_date_ny': ny_dt.strftime('%Y-%m-%d'),
+            'published_time_ny': ny_dt.strftime('%H:%M:%S'),
+            'published_date_et': ny_dt.strftime('%m/%d/%Y %H:%M')
+        }
 
     def fetch_articles(self, extract_full_content: bool = True):
         """
@@ -168,22 +203,24 @@ class NewsFetcher:
 
             # Parse published date
             pub_date = self.parse_article_date(entry.published) if hasattr(entry, 'published') else None
+            _, pub_date_utc, pub_date_ny = self.normalize_pub_date(pub_date)
 
             # Filter by date range if date is available
-            if pub_date:
-                if not (self.start_date <= pub_date <= self.end_date + timedelta(days=1)):
+            if pub_date_ny:
+                if not (self.start_date_date <= pub_date_ny.date() <= self.end_date_date):
                     print(f"  Skipping - outside date range ({pub_date.strftime('%Y-%m-%d')})")
                     continue
 
             # Extract article information
+            date_fields = self.build_date_fields(pub_date_utc, pub_date_ny)
             article = {
                 'title': entry.title,
                 'source': entry.source.title if hasattr(entry, 'source') and hasattr(entry.source, 'title') else 'Unknown',
                 'url': entry.link,
-                'published_date': pub_date.strftime('%Y-%m-%d %H:%M:%S') if pub_date else 'Unknown',
                 'summary': entry.summary if hasattr(entry, 'summary') else '',
                 'content': ''
             }
+            article.update(date_fields)
 
             # Extract full content if requested
             if extract_full_content:
@@ -211,8 +248,18 @@ class NewsFetcher:
             return
 
         df = pd.DataFrame(self.articles)
-        # Reorder columns to put published_date next to source (column 2)
-        column_order = ['title', 'source', 'published_date', 'url', 'summary', 'content']
+        column_order = [
+            'title',
+            'source',
+            'url',
+            'actual date and time',
+            'published_date_utc',
+            'published_date_ny',
+            'published_time_ny',
+            'published_date_et',
+            'summary',
+            'content'
+        ]
         df = df[column_order]
         df.to_csv(filename, index=False, encoding='utf-8')
         print(f"✓ Saved to {filename}")
@@ -226,7 +273,7 @@ class NewsFetcher:
         for idx, article in enumerate(self.articles, 1):
             print(f"\n{idx}. {article['title']}")
             print(f"   Source: {article['source']}")
-            print(f"   Date: {article['published_date']}")
+            print(f"   Date: {article.get('published_date_et', 'Unknown')}")
             print(f"   URL: {article['url']}")
             print(f"   Content length: {len(article['content'])} characters")
 

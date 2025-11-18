@@ -12,12 +12,12 @@ news_domains: []  # Optional: only used for reporting which outlets produced mat
 
 defaults:
   news_timezone: America/New_York
-  news_date: 2025-10-10        # Start date for Google News RSS queries
-  news_end_date: 2025-10-11    # Optional end date (inclusive). Remove to use single day.
+  news_date: 2025-10-13        # Start date for Google News RSS queries
+  news_end_date: 2025-10-13    # Optional end date (inclusive). Remove to use single day.
 
-  price_date: 2025-10-12       # Anchor date for NVDA prices
+  price_date: 2025-10-13       # Anchor date for NVDA prices
   price_hours_after: 48        # Pull 48 hours of prices after the price-date market open
-  price_trading_days: 0        # Set >0 to fetch full sessions instead of hours_after
+  price_trading_days: 3        # Set >0 to fetch full sessions instead of hours_after
   interval_minutes: 60         # Fetch 60-minute bars from Polygon
   
   keywords:

@@ -216,19 +216,29 @@ def fetch_news_for_date(
 
     tz_name = timezone or CONFIG.default_news_timezone
     tz = ZoneInfo(tz_name)
-    keyword_label = " AND ".join(keywords)
     domain_counts: dict[str, int] = {domain: 0 for domain in CONFIG.news_domains}
 
     try:
         payload = _fetch_articles_from_google_news(keywords, target_date)
     except Exception as exc:
         logging.error("Failed to fetch Google News results for %s: %s", target_date, exc)
-        empty_df = pd.DataFrame(
-            columns=["published_at", "source_domain", "title", "description", "url", "keyword"]
-        )
+        empty_columns = [
+            "title",
+            "source",
+            "url",
+            "actual date and time",
+            "published_date_utc",
+            "published_date_ny",
+            "published_time_ny",
+            "published_date_et",
+            "summary",
+            "content",
+            "news_date",
+        ]
+        empty_df = pd.DataFrame(columns=empty_columns)
         return empty_df, domain_counts
 
-    articles: list[Article] = []
+    rows: list[dict] = []
     for raw_article in payload or []:
         url = raw_article.get("url", "")
         if not url:
@@ -247,21 +257,31 @@ def fetch_news_for_date(
             or ""
         )
 
-        article = Article(
-            published_at=_normalize_article_timestamp(raw_article.get("published_date"), tz),
-            source_domain=domain or "",
-            title=raw_article.get("title", ""),
-            description=description,
-            url=url,
-            keyword=keyword_label,
-        )
-        articles.append(article)
+        published_utc = raw_article.get("published_date_utc")
+        published_et = raw_article.get("published_date_et")
+        published_ny = raw_article.get("published_date_ny")
+        actual_dt = raw_article.get("actual date and time")
+        published_value = published_utc or published_et or published_ny or actual_dt
+
+        row = {
+            "title": raw_article.get("title", ""),
+            "source": raw_article.get("source", domain or "Unknown"),
+            "url": url,
+            "actual date and time": actual_dt or "Unknown",
+            "published_date_utc": published_utc or "",
+            "published_date_ny": published_ny or "",
+            "published_time_ny": raw_article.get("published_time_ny", ""),
+            "published_date_et": published_et or "",
+            "summary": description,
+            "content": raw_article.get("content", ""),
+            "news_date": target_date,
+        }
+        rows.append(row)
         if domain:
             domain_counts[domain] += 1
 
-    df = pd.DataFrame([a.__dict__ for a in articles])
+    df = pd.DataFrame(rows)
     if not df.empty:
-        df = df.sort_values("published_at")
         df = df.drop_duplicates(subset=["url"]).reset_index(drop=True)
     return df, domain_counts
 
@@ -684,25 +704,31 @@ def main() -> None:
         news_label = _format_date_label(news_dates)
 
     price_label = str(price_date_value)
-    output_dir = Path(f"{CONFIG.ticker}_{price_label or news_label}")
+    base_output_dir = Path("data/demo_data")
+    output_dir = base_output_dir / f"{CONFIG.ticker}_{price_label or news_label}"
+    base_output_dir.mkdir(parents=True, exist_ok=True)
     output_dir.mkdir(parents=True, exist_ok=True)
     logging.info("Writing outputs to %s", output_dir)
 
-    news_columns = [
-        "published_at",
-        "source_domain",
+    output_news_columns = [
         "title",
-        "description",
+        "source",
         "url",
-        "keyword",
-        "news_date",
+        "actual date and time",
+        "published_date_utc",
+        "published_date_ny",
+        "published_time_ny",
+        "published_date_et",
+        "summary",
+        "content",
     ]
+    news_columns = output_news_columns + ["news_date"]
     news_csv = output_dir / f"news_{news_label}.csv"
     if args.skip_news:
         logging.info("Skipping news fetch (skip-news flag set)")
         news_df = pd.DataFrame(columns=news_columns)
         domain_counts = {domain: 0 for domain in CONFIG.news_domains}
-        news_df.to_csv(news_csv, index=False)
+        news_df.to_csv(news_csv, index=False, columns=output_news_columns)
         print(f"Skipped news fetch; wrote empty placeholder to {news_csv}")
     else:
         domain_counts = {domain: 0 for domain in CONFIG.news_domains}
@@ -721,7 +747,7 @@ def main() -> None:
             news_df = pd.concat(frames, ignore_index=True)
         else:
             news_df = pd.DataFrame(columns=news_columns)
-        news_df.to_csv(news_csv, index=False)
+        news_df.to_csv(news_csv, index=False, columns=output_news_columns)
         print(f"Saved {len(news_df)} news rows to {news_csv}")
 
         matched_domains = sorted([domain for domain, count in domain_counts.items() if count])
