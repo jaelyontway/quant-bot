@@ -32,6 +32,14 @@ except Exception as exc:  # pragma: no cover - optional dependency
 else:  # pragma: no cover - simple assignment
     _NEWS_FETCH_IMPORT_ERROR = None
 
+try:
+    from data_processing.timezone_converter import process_news_csv
+except Exception as exc:  # pragma: no cover - optional dependency
+    process_news_csv = None
+    _TIMEZONE_CONVERTER_IMPORT_ERROR = exc
+else:  # pragma: no cover - simple assignment
+    _TIMEZONE_CONVERTER_IMPORT_ERROR = None
+
 # ----- Configuration -------------------------------------------------------
 # Default values + config loading/merging live here so library imports and
 # CLI executions rely on the same centralized settings and API credentials.
@@ -749,6 +757,17 @@ def main() -> None:
             news_df = pd.DataFrame(columns=news_columns)
         news_df.to_csv(news_csv, index=False, columns=output_news_columns)
         print(f"Saved {len(news_df)} news rows to {news_csv}")
+
+        # Process timezone conversions
+        if process_news_csv is not None and not news_df.empty:
+            print("Processing timezone conversions...")
+            try:
+                process_news_csv(str(news_csv), str(news_csv))
+                print(f"Timezone conversions completed for {news_csv}")
+            except Exception as exc:
+                print(f"Warning: Timezone conversion failed: {exc}")
+        elif process_news_csv is None:
+            print("Warning: Timezone converter unavailable. Install dependencies if needed.")
 
         matched_domains = sorted([domain for domain, count in domain_counts.items() if count])
         missing_domains = sorted([domain for domain, count in domain_counts.items() if not count])
